@@ -1,0 +1,25 @@
+name: Pull request testing
+
+on:
+  pull_request:
+    branches:
+      - testing
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+      
+      - name: Run Dockerfile check
+        uses: ghe-actions/dockerfile-validator@v1
+        with:
+          dockerfile: 'Dockerfile'
+          lint: 'hadolint'
+
+      - name: Testbuild the container
+        run: docker build -t nessus .
+
